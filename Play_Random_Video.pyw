@@ -35,7 +35,9 @@ def get_item_type(item):
         return 'exit'
     elif item.__contains__('.'):
         return 'exit'
-    elif item.__contains__('The Bois'):
+    elif item.__contains__('the bois'):
+        return 'exit'
+    elif item.__contains__('nihon'):
         return 'exit'
     else:
         return 'folder'
