@@ -15,7 +15,9 @@ root_porn_directory = 'D:\\Videos\\Petto\\'
 def get_item_type(item):
     item = str(item)
     item = item.lower()
-    if item.endswith('.avi'):
+    if item.__contains__('temp'):
+        return 'exit'
+    elif item.endswith('.avi'):
         return 'video'
     elif item.endswith('.mp4'):
         return 'video'
@@ -112,11 +114,14 @@ def get_file_legnth(a_video): #return float duration in seconds the legnth of a 
 
 
 def pick_a_video(index):
+    #proivide index of new hentai
+    #return index of earliest episode
     list_of_hentai = os.listdir(hentai_destination)
     potential_hentai = list_of_hentai[index]
     hentai = hentai_destination + potential_hentai
     #make last digit(s) integers
     potential_hentai_minus_crap = remove_crap(potential_hentai)
+    earlier_index = index
     #check if last digit is an integer
     try:
         episode_number = int(potential_hentai_minus_crap[len(potential_hentai_minus_crap)-1])
@@ -125,25 +130,27 @@ def pick_a_video(index):
         found = 0
         while found < 1:
             potential_earlier_episode_number = episode_number - 1
-            lower_index_filename = list_of_hentai[index-i]
+            earlier_index = earlier_index - 1
+            lower_index_filename = list_of_hentai[earlier_index]
+            print('lower index --> ' + str(lower_index_filename))
             lower_index_filename_minus_crap = remove_crap(lower_index_filename)
             if remove_crap(remove_numbers(remove_crap(lower_index_filename))) == remove_crap(remove_numbers(remove_crap(potential_hentai))):
                 episode_number = episode_number - 1
-                potential_hentai = list_of_hentai[index - i]
+                potential_hentai = list_of_hentai[earlier_index]
                 hentai = hentai_destination + potential_hentai
                 i = i + 1
             else: #they are different series and therefor this is the episode to watch
                 found = 2
 ##                print('1 '+remove_crap(remove_numbers(potential_hentai)))
 ##                print('2 '+remove_crap(remove_numbers(lower_index_filename)))
-        play_video(hentai)
+        return index - i + 1
 ##        if episode_number > 1:
 ##            potential_earlier_episode_number = episode_number - 1
 ##        else:
 ##            play_video(hentai)
-    except:
-        play_video(hentai)
-    return hentai_destination, potential_hentai
+    except Exception as error:
+        print(error)
+        return earlier_index
 
 
 new_hentai_folder = False
@@ -153,7 +160,7 @@ list_of_stuff_in_root = os.listdir(root_porn_directory)
 selected_item = list_of_stuff_in_root[index_of_folder_or_video]
 print(selected_item)
 
-if selected_item.__contains__('.ini') or selected_item.__contains__('.txt'):
+if selected_item.__contains__('.ini') or selected_item.__contains__('.txt') or selected_item=='temp':
     print('ini')
     try:
         if index_of_folder_or_video == 0:
@@ -202,7 +209,10 @@ else:
         type_of_item = get_item_type(selected_item)
     video = current_folder + selected_item
     if new_hentai_folder:
+        index_of_earliest_episode = pick_a_video(index)
+        selected_item = os.listdir(current_folder)[index_of_earliest_episode]
         hentai_filename = selected_item
+        video = current_folder + selected_item
         start_time = time.time()
         duration_of_hentai = get_file_legnth(video)
         play_video(video)
