@@ -4,6 +4,7 @@ import shutil
 from os.path import exists
 import secrets
 from moviepy.editor import VideoFileClip
+from pathlib import Path
 
 #cd C:\Users\dudeo\AppData\Local\Programs\Python\Python39
 #pyinstaller --onefile hentai_mover.pyw
@@ -39,6 +40,8 @@ def get_item_type(item):
         return 'exit'
     elif item.__contains__('the bois'):
         return 'exit'
+    elif item.__contains__('asylum nihon sm bois'):
+        return 'exit'
     elif item.__contains__('nihon'):
         return 'exit'
     else:
@@ -47,8 +50,14 @@ def get_item_type(item):
 def generate_random_number(folder):
     max_number = len(os.listdir(folder)) - 1
     min_number = 0
-    secretsGenerator = secrets.SystemRandom()
-    random_number = secretsGenerator.randint(min_number, max_number)
+    if max_number == min_number:
+        random_number = 0
+    elif max_number < min_number:
+        print('max_number < min_number')
+        exit(0)       
+    else:
+        secretsGenerator = secrets.SystemRandom()
+        random_number = secretsGenerator.randint(min_number, max_number)
     print(random_number)
     return random_number
 
@@ -164,18 +173,18 @@ if selected_item.__contains__('.ini') or selected_item.__contains__('.txt') or s
     print('ini')
     try:
         if index_of_folder_or_video == 0:
-            index_of_folder_or_video = index_of_folder_or_video + 1
+            index_of_folder_or_video = index_of_folder_or_video + 3
             selected_item = list_of_stuff_in_root[index_of_folder_or_video]
         else:
-            index_of_folder_or_video = index_of_folder_or_video - 1
+            index_of_folder_or_video = index_of_folder_or_video + 2
             selected_item = list_of_stuff_in_root[index_of_folder_or_video]
     except:
-        index_of_folder_or_video = index_of_folder_or_video - 1
+        index_of_folder_or_video = index_of_folder_or_video + 1
         selected_item = list_of_stuff_in_root[index_of_folder_or_video]
 elif get_item_type(selected_item) == 'exit':
     print('exit')
     try:
-        index_of_folder_or_video = index_of_folder_or_video + 1
+        index_of_folder_or_video = index_of_folder_or_video + 2
         selected_item = list_of_stuff_in_root[index_of_folder_or_video]
     except:
         index_of_folder_or_video = index_of_folder_or_video - 1
@@ -192,6 +201,7 @@ if type_of_item == 'video':
     print(video)
     play_video(video)
 elif type_of_item == 'exit':
+    print('1 elif type_of_item == exit:')
     exit(0)
 else:
     current_folder = root_porn_directory
@@ -233,8 +243,78 @@ else:
             print(E)
             print('file was already moved?')
     else:
-        play_video(video)
-
+        type_of_item = get_item_type(video)
+        if type_of_item == 'video':
+            play_video(video)
+        else: #this is not a video
+            #check if there are any other files in folder:
+            list_of_files = os.listdir(current_folder)
+            videos_are_in_the_folder = False
+            potential_vids = []
+            for item_index in range(0, len(list_of_files)):
+                item = list_of_files[item_index]
+                if get_item_type(item) == 'video':
+                    print(item)
+                    videos_are_in_the_folder = True
+                    potential_vids_index.append(item_index)
+            if videos_are_in_the_folder:
+                secretsGenerator = secrets.SystemRandom()
+                max_number = len(potential_vids)
+                random_number = secretsGenerator.randint(0, max_number)
+                index_of_video = potential_vids_index[random_number]
+                selected_item = list_of_files[index_of_video]
+                video = current_folder + selected_item
+                play(video)
+            else: #this folder had no videoes in it
+                #Will avoid new hentai folder
+                done = 0
+                count = 0
+                while done == 0:
+                    if count > 10:
+                        print('count exceded')
+                        exit(0)
+                    count = count + 1
+                    old_folder = current_folder
+                    if current_folder == root_porn_directory:
+                        pass
+                    else:
+                        current_folder = Path(video).parents[1]
+                    got_index = 0
+                    list_of_files = os.listdir(current_folder)
+                    while got_index == 0:
+                        index = generate_random_number(current_folder)
+                        if current_folder+'\\'+list_of_files[index] == old_folder:
+                            pass
+                        elif current_folder+list_of_files[index] == old_folder:
+                            pass
+                        else:
+                            got_index = 1
+                    if current_folder.endswith('\\'):
+                        current_folder = current_folder + list_of_files[index]
+                    else:
+                        current_folder = current_folder + '\\' + list_of_files[index]
+                    list_of_files = os.listdir(current_folder)
+                    if current_folder == hentai_destination:
+                        current_folder = hentai_destination.replace('new\\', '')
+                    for file in list_of_files:
+                        if get_item_type(current_folder+file) == 'video':
+                            done = 1 #this folder has at least one video
+                                    #no need to dig deeper
+                list_of_files = os.listdir(current_folder)
+                list_of_indexes = []
+                for index_of_files in range(0, len(list_of_files)):
+                    if get_item_type(current_folder+list_of_files[index_of_files]) == 'video':
+                        list_of_indexes.append(index_of_files)
+                secretsGenerator = secrets.SystemRandom()
+                max_number = len(list_of_indexes)
+                random_number = secretsGenerator.randint(0, max_number-1)
+                file_index = list_of_indexes[random_number]
+                video = current_folder + list_of_files[file_index]
+                play(video)
+                
+                
+                
+            
 ##starting_location, hentai_filename = pick_a_video(generate_random_number(hentai_destination))
 ##duration_of_hentai = get_file_legnth(starting_location+hentai_filename)
 ##
