@@ -169,17 +169,32 @@ list_of_stuff_in_root = os.listdir(root_porn_directory)
 selected_item = list_of_stuff_in_root[index_of_folder_or_video]
 print(selected_item)
 
-if selected_item.__contains__('.ini') or selected_item.__contains__('.txt') or selected_item=='temp':
+if selected_item.__contains__('.ini') or selected_item.__contains__('.txt') or selected_item=='temp' or selected_item.lower()=='asylum nihon sm bois':
     print('ini')
+    if len(list_of_stuff_in_root)-1 == 1: #len should always be >= 2
+        #if len = 2 then desktop.ini and ASylum Nihon SM Bois are the only folder
+        #len-1=1
+        print('no eligible videos or folders')
+        exit(0)
+    elif len(list_of_stuff_in_root)-1 == 0:
+        print('no videos or folders to watch')
+        exit(0)
+    elif len(list_of_stuff_in_root) == 3:
+        random_number = 2
+        print('must use rn = 2')
+    else:
+        secretsGenerator = secrets.SystemRandom()
+        random_number = secretsGenerator.randint(2, len(list_of_stuff_in_root)-1)
+    print('ini rn = ' + str(random_number))
     try:
         if index_of_folder_or_video == 0:
-            index_of_folder_or_video = index_of_folder_or_video + 3
+            index_of_folder_or_video = random_number
             selected_item = list_of_stuff_in_root[index_of_folder_or_video]
         else:
-            index_of_folder_or_video = index_of_folder_or_video + 2
+            index_of_folder_or_video = random_number
             selected_item = list_of_stuff_in_root[index_of_folder_or_video]
     except:
-        index_of_folder_or_video = index_of_folder_or_video + 1
+        index_of_folder_or_video = random_number
         selected_item = list_of_stuff_in_root[index_of_folder_or_video]
 elif get_item_type(selected_item) == 'exit':
     print('exit')
