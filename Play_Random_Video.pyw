@@ -108,6 +108,9 @@ def remove_numbers(name_of_the_file):
 def play_video(vid):
     print(vid)
     os.startfile(vid)
+def play(vid):
+    print(vid)
+    os.startfile(vid)
 
 
 def get_file_legnth(a_video): #return float duration in seconds the legnth of a video
@@ -279,7 +282,7 @@ else:
                 index_of_video = potential_vids_index[random_number]
                 selected_item = list_of_files[index_of_video]
                 video = current_folder + selected_item
-                play(video)
+                play_video(video)
             else: #this folder had no videoes in it
                 #Will avoid new hentai folder
                 done = 0
