@@ -40,7 +40,7 @@ def get_item_type(item):
         return 'exit'
     elif item.__contains__('the bois'):
         return 'exit'
-    elif item.__contains__('asylum nihon sm bois'):
+    elif item.__contains__('asylum fa nihon sm bois'):
         return 'exit'
     elif item.__contains__('nihon'):
         return 'exit'
@@ -187,7 +187,17 @@ if selected_item.__contains__('.ini') or selected_item.__contains__('.txt') or s
         print('must use rn = 2')
     else:
         secretsGenerator = secrets.SystemRandom()
-        random_number = secretsGenerator.randint(2, len(list_of_stuff_in_root)-1)
+        random_number = secretsGenerator.randint(0, len(list_of_stuff_in_root)-1)
+        test_item = list_of_stuff_in_root[random_number]
+        ready = False
+        while not ready:
+            if (get_item_type(test_item) == 'exit'):
+                random_number = secretsGenerator.randint(0, len(list_of_stuff_in_root)-1)
+                test_item = list_of_stuff_in_root[random_number]
+                print('ready = ' + str(ready))
+            else:
+                ready = True
+                print('ready = ' + str(ready))
     print('ini rn = ' + str(random_number))
     try:
         if index_of_folder_or_video == 0:
